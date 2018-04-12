@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <title>vue</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      .box {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        padding: 0;
+      }
+      .box-item {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        box-sizing: border-box;
+        list-style: none;
+        border: 1px solid #000;
+        border-radius: 50%;
+        text-align: center;
+        opacity: 1;
+        /*transition: all 2s;
+        -webkit-transition: all 2s;*/
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <ul class="box" :style="boxStyle">
+        <li class="box-item" v-show="boxItem && boxItem.length > 0" v-for="(item, index) of boxItem" :style="[boxItemTransition, boxItemStyle[index]]"></li>
+      </ul>
+    </div>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          boxStyle: {},
+          boxItem: [], // 小球个数
+          boxItemStyle: [], // 小球独立动画样式
+          boxItemTransition: {}, // 小球transition样式
+        },
+        methods: {
+          // 定义动画时间
+          setTime: function (time) {
+            this.boxItemTransition.transition = 'all ' + time + 'ms';
+            this.boxItemTransition.webkitTransition = 'all ' + time + 'ms';
+          },
+          // 清空小球并重建小球
+          rerenderBox: function (num, next) {
+            var self = this;
+            this.boxItem = [];
+            this.boxItemStyle = [];
+            self.$nextTick(function () {
+              self.boxItem = Array(num);
+              self.$nextTick(function () {
+                setTimeout(() => {
+                  next();
+                }, 0);
+              });
+            });
+          },
+          // 动态创建小球动画，参数为：小球个数、移动距离、动画时长
+          createStyle: function (num, distance, time) {
+            var self = this;
+            var num = parseInt(num);
+            var r = parseInt(distance);
+            this.setTime(time);
+            this.rerenderBox(num, function () {
+              var arr = [];
+              for (var i = 0; i < self.boxItem.length; i += 1) {
+                // var item = self.boxItem[i];
+                var angle = i * (360 / num) * Math.PI / 180;
+                arr.push({
+                  top: Math.sin(angle) * r,
+                  left: Math.cos(angle) * r,
+                  opacity: 0,
+                });
+              }
+              self.boxItemStyle = arr;
+            });
+          },
+        },
+        mounted: function () {
+          var self = this;
+          document.body.addEventListener('click', function (e) {
+            var x = e.pageX;
+            var y = e.pageY;
+            self.boxStyle.left = (x - 10) + 'px';
+            self.boxStyle.top = (y - 10) + 'px';
+            self.createStyle(9, 150, 2000);
+          }, false);
+        },
+      })
+    </script>
+  </body>
+</html>

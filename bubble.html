@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		html,body,ul,li{margin:0;padding:0;}
+		body{position: relative;}
+		.box{width: 20px;height: 20px;position: absolute;}
+		.box li{list-style: none;width: 20px;height: 20px;position: absolute;left: 0;top: 0;border: 1px solid #000;border-radius: 50%;text-align: center;line-height: 20px;box-sizing: border-box;}
+	</style>
+</head>
+<body>
+	<ul class="box"></ul>
+	<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script>
+		//鼠标点击事件：
+		$(document).on('click',function(ev){
+			$('.box').empty();
+			var x=ev.pageX;
+			var y = ev.pageY;//获取鼠标位置
+			$('.box').css({
+				'left': x-10+'px',
+				'top': y-10+'px'
+			});
+			creatLi(9,150,2000);
+		})
+		//动态创建小球，参数为：小球个数、移动距离、动画时长
+		function creatLi(num,distance,time){
+			var num = parseInt(num),
+				r = parseInt(distance);
+			for(var i = 0;i < num;i ++){
+				var oLi = $('<li>');
+				$('.box').append(oLi);
+				var angle = i*(360/num)*Math.PI/180;
+				oLi.animate({
+					'top':Math.sin(angle)*r,
+					'left':Math.cos(angle)*r,
+					'opacity':0
+				},time);
+				$('.box').append(oLi);
+			}
+		}
+	</script>
+</body>
+</html>
